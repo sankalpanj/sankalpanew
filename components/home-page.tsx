@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   ArrowRight,
+  ChevronRight,
   Clock,
   CloudDownload,
   HourglassIcon,
@@ -19,7 +20,25 @@ export default function HomePage() {
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
-
+      <div className="flex items-center gap-2 mb-2 sm:mb-0 w-full justify-between mx-auto bg-primary/30 px-2">
+        <div className="flex items-center gap-4">
+          <div className="bg-primary text-primary-foreground text-xs font-bold px-2 py-1 rounded">
+            NEW EVENT
+          </div>
+          <p className="text-sm font-medium">
+            Join us for our Community 5K Run/ Walk on March 17, 2025
+          </p>
+        </div>
+        <div className="container py-3 px-4 flex flex-col sm:flex-row items-center">
+          <div className="flex items-center gap-3">
+            <Link href="/events?t=uc">
+              <Button size="sm" variant="outline" className="text-xs h-8 gap-1">
+                Learn More <ChevronRight className="h-3 w-3" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </div>
       <main className="flex-1">
         {/* Hero Section */}
         <section className="relative">

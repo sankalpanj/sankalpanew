@@ -1,13 +1,16 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { SignedIn, SignedOut, UserButton, useUser } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const redirect = useRouter();
+  const { user } = useUser();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -63,6 +66,8 @@ export default function Header() {
               appearance={{
                 elements: { userButtonAvatarBox: { width: 40, height: 40 } },
               }}
+              userProfileUrl={`/profile/${user?.id}`}
+              userProfileMode="navigation"
             />
           </SignedIn>
           <Link href="/donate" className="hidden md:block">

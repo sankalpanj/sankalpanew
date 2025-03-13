@@ -14,7 +14,7 @@ export default function Footer() {
   return (
     <footer className="bg-muted py-12 md:py-16">
       <div className="container">
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-8 md:grid-cols-3 lg:grid-cols-3">
           <div>
             <div className="flex items-center gap-2 mb-6">
               <Image
@@ -113,7 +113,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          <div>
+          {/* <div>
             <h3 className="font-bold mb-6">Programs</h3>
             <ul className="space-y-3">
               <li>
@@ -165,7 +165,7 @@ export default function Footer() {
                 </Link>
               </li>
             </ul>
-          </div>
+          </div> */}
 
           <div>
             <h3 className="font-bold mb-6">Contact</h3>
@@ -173,18 +173,20 @@ export default function Footer() {
               <li className="flex items-start gap-2">
                 <MapPin className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
                 <span className="text-muted-foreground">
-                  123 Hope Street, Cityville, Country, 12345
+                  Plainsboro, NJ, USA
+                </span>
+              </li>
+              <li className="flex items-start gap-2">
+                <Phone className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                <span className="text-muted-foreground">
+                  +1 732-421-4042/ 267-886-4559
                 </span>
               </li>
               <li className="flex items-start gap-2">
                 <Mail className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
                 <span className="text-muted-foreground">
-                  info@hopefoundation.org
+                  info@sankalpausa.org
                 </span>
-              </li>
-              <li className="flex items-start gap-2">
-                <Phone className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
-                <span className="text-muted-foreground">+1 (555) 123-4567</span>
               </li>
             </ul>
           </div>

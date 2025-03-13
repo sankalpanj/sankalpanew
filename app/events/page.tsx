@@ -1,15 +1,23 @@
 import Footer from "@/components/footer";
 import Header from "@/components/header";
+import { ReadMoreButton } from "@/components/read-more";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { EVENTS } from "@/lib/constants";
 import { Clock, Filter, MapPin, Search, Users } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import Link from "next/link";
 
-export default function EventsPage() {
+export default async function EventsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ t: string }>;
+}) {
+  const t = (await searchParams).t;
+
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
@@ -60,7 +68,10 @@ export default function EventsPage() {
         {/* Event Categories */}
         <section className="py-8">
           <div className="container">
-            <Tabs defaultValue="all" className="w-full">
+            <Tabs
+              defaultValue={t === "uc" ? "upcoming" : "all"}
+              className="w-full"
+            >
               <TabsList className="w-full justify-start overflow-hidden py-2">
                 <TabsTrigger value="all">All Events</TabsTrigger>
                 <TabsTrigger value="upcoming">Upcoming Events</TabsTrigger>
@@ -343,11 +354,11 @@ export default function EventsPage() {
                     <Card className="overflow-hidden">
                       <div className="relative h-56">
                         <div className="absolute top-0 left-0 bg-primary text-primary-foreground px-4 py-2 z-10 rounded-br-lg font-medium">
-                          2025
+                          MAR 17, 2025
                         </div>
                         <Image
                           src="/images/5kRun/logo.png?height=100&width=200"
-                          alt="Charity Gala"
+                          alt="5KRun"
                           fill
                           className="object-contain"
                         />
@@ -374,24 +385,25 @@ export default function EventsPage() {
                             <span>Plainsboro Community Park, New Jersey</span>
                           </div>
                         </div>
-                        <p className="text-muted-foreground mb-4 line-clamp-3 break-words">
-                          We are excited to host our 3rd Annual 5K Run / 2K
-                          Walk, a fun and impactful event that brings our
-                          community together for a great cause! As a non-profit
-                          organization dedicated to environmental
-                          sustainability, we organize this event every year to
-                          raise funds and awareness for local conservation
-                          efforts. All proceeds from this event go directly to
-                          the Township’s environmental initiatives, such as
-                          preserving green spaces, planting trees, and promoting
-                          eco-friendly projects. By participating, you’re not
-                          just running or walking—you’re making a difference for
-                          the planet! Join us for a morning of fitness,
-                          friendship, and environmental action. Whether you run,
-                          walk, or cheer from the sidelines, every step counts
-                          toward a greener future!
+                        <p className="text-muted-foreground line-clamp-3 break-words">
+                          Sankalpa, in collaboration with Plainsboro Township,
+                          is excited to host the **3rd Annual 5K Run/2K Walk on
+                          May 17, 2025, at Plainsboro Community Park! With
+                          record-breaking participation over the last two years,
+                          this event continues to grow, bringing together
+                          runners, walkers, families, and community members for
+                          a meaningful cause.
                         </p>
-                        <Button className="w-full">Register Now</Button>
+                        <ReadMoreButton
+                          eventName="fiveKRun"
+                          className="flex w-full justify-end mb-2"
+                        />
+                        <Link
+                          href={EVENTS["fiveKRun"].link ?? ""}
+                          target="_blank"
+                        >
+                          <Button className="w-full">Register Now</Button>
+                        </Link>
                       </CardContent>
                     </Card>
                   </div>

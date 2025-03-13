@@ -1,10 +1,10 @@
-import { AppOrchestrator } from "@/components/app-orchestrator";
-import { StripeWrapper } from "@/components/stripe-wrapper";
+import Footer from "@/components/footer";
+import Header from "@/components/header";
 import { Toaster } from "@/components/ui/sonner";
 import Provider from "@/lib/trpc/provider";
 import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
-import "./globals.css";
+import "../../globals.css";
 
 export const metadata: Metadata = {
   title: "Sankalpa USA",
@@ -20,10 +20,11 @@ export default function RootLayout({
       <Provider>
         <ClerkProvider>
           <body>
-            <StripeWrapper>{children}</StripeWrapper>
+            <Header />
+            {children}
+            <Footer />
           </body>
           <Toaster richColors theme="light" />
-          <AppOrchestrator />
         </ClerkProvider>
       </Provider>
     </html>

@@ -25,6 +25,8 @@ const members = sqliteTable("members", {
   stripeSubscriptionId: text("stripe_subscription_id").default(""), // Stripe subscription ID
   stripePlanId: text("stripe_plan_id").default(""), // Stripe plan ID
   stripeProductId: text("stripe_product_id").default(""), // Stripe product ID
+  gender: text("gender").default("Others"),
+  occupation: text("occupation").default("N/A"),
 });
 
 const children = sqliteTable("children", {
@@ -80,6 +82,9 @@ const contacts = sqliteTable("contacts", {
   email: text("email").notNull(),
   message: text("message").default(""),
   createdAt: text("created_at").default(new Date().toISOString()).notNull(),
+  phone: text("phone").default("N/A"),
+  subject: text("subject").default("No Subject"),
+  userType: text("userType"),
 });
 
 type ContactsSchema = typeof contacts.$inferSelect;
@@ -95,13 +100,14 @@ type MembersSchema = typeof members.$inferSelect;
 type MembersSchemaInsert = typeof members.$inferInsert;
 
 export type {
-    ContactsSchema,
-    ContactsSchemaInsert, EventsSchema,
-    EventsSchemaInsert, MembersSchema,
-    MembersSchemaInsert,
-    PaymentsSchema,
-    PaymentsSchemaInsert
+  ContactsSchema,
+  ContactsSchemaInsert,
+  EventsSchema,
+  EventsSchemaInsert,
+  MembersSchema,
+  MembersSchemaInsert,
+  PaymentsSchema,
+  PaymentsSchemaInsert,
 };
 
-    export { children, contacts, members, payments };
-
+export { children, contacts, members, payments };

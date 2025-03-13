@@ -1,7 +1,17 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { trpc } from "@/lib/trpc/client";
+import { useSignUp } from "@clerk/nextjs";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import Link from "next/link";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
 import {
   Card,
   CardContent,
@@ -9,26 +19,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Textarea } from "@/components/ui/textarea";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { format } from "date-fns";
-import dayjs from "dayjs";
-import { CalendarIcon, Check, Plus, Trash2 } from "lucide-react";
-import Link from "next/link";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import CustomDatePicker from "./date-picker";
+} from "./ui/card";
 import { Dialog, DialogContent, DialogHeader } from "./ui/dialog";
 import {
   Form,
@@ -38,153 +29,48 @@ import {
   FormLabel,
   FormMessage,
 } from "./ui/form";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "./ui/input-otp";
+import { Label } from "./ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
 
-const memberSchema = z.object({
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
-  email: z.string().email("Invalid email format"),
-  phone: z
-    .string()
-    .min(1, "Phone number is required")
-    .regex(/^\d{10}$/, "Invalid telephone number"),
-  dob: z.date().nullable(),
-  gender: z.string().min(1, "Gender is required"),
-  address: z.string().min(1, "Address is required"),
-  city: z.string().min(1, "City is required"),
-  state: z.string().min(1, "State is required"),
-  zipCode: z.string().regex(/^\d{4,6}$/, "Invalid ZIP code format"),
-  occupation: z.string().optional(),
-  profilePhoto: z.string().nullable(),
-});
-
-const childSchema = z
+const signUpFormSchema = z
   .object({
-    hasChild: z.boolean(),
-    children: z.array(
-      z.object({
-        name: z.string().min(1, "Child's name is required"),
-        age: z.preprocess(
-          (value) => Number(value),
-          z.number().positive("Age must be a positive integer")
-        ),
-        gender: z.string().min(1, "Gender is required"),
-      })
-    ),
+    firstName: z.string().min(1, "Enter first name"),
+    lastName: z.string().min(1, "Enter last name"),
+    email: z.string().email().min(1, "Enter email"),
+    password: z
+      .string()
+      .min(8, "Password must be at least 8 characters")
+      .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+      .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+      .regex(/[0-9]/, "Password must contain at least one number")
+      .regex(
+        /[^a-zA-Z0-9]/,
+        "Password must contain at least one special character"
+      ),
+    cpassword: z.string().min(1, "Enter confirm password"),
+    agreeToTerms: z.boolean(),
+    gender: z.enum([
+      "male",
+      "female",
+      "non-binary",
+      "others",
+      "prefer-not-to-say",
+    ]),
+    occupation: z.string().nullable(),
   })
-  .refine(
-    (data) => {
-      if (data.hasChild) {
-        return data.children.every(
-          (child) => child.name && child.age && child.gender
-        );
-      }
-      return true;
-    },
-    {
-      message: "All child fields are required if hasChild is true",
-      path: ["children"],
+  .refine(({ cpassword, password }) => {
+    if (cpassword !== password) {
+      return "Passwords don't match";
     }
-  )
-  .superRefine((data, ctx) => {
-    if (data.hasChild) {
-      data.children.forEach((child, index) => {
-        if (!child.name) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: "Child's name is required",
-            path: ["children", index, "name"],
-          });
-        }
-        if (!child.age) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: "Child's age is required",
-            path: ["children", index, "age"],
-          });
-        }
-        if (!child.gender) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: "Child's gender is required",
-            path: ["children", index, "gender"],
-          });
-        }
-      });
-    }
-  });
-
-const spouseSchema = z
-  .object({
-    hasSpouse: z.boolean(),
-    spouseFirstName: z.string().nullable().optional(),
-    spouseLastName: z.string().nullable().optional(),
-    spouseDob: z.date().nullable(),
-    spouseEmail: z.string().email("Invalid email format").nullable().optional(),
-    spousePhone: z.string().nullable().optional(),
-    spouseOccupation: z.string().nullable().optional(),
-  })
-  .refine(
-    (data) => {
-      if (data.hasSpouse) {
-        return (
-          data.spouseFirstName &&
-          data.spouseLastName &&
-          data.spouseDob &&
-          data.spouseEmail &&
-          data.spousePhone
-        );
-      }
-      return true;
-    },
-    {
-      message: "All spouse fields are required if hasSpouse is true",
-      path: [
-        "spouseFirstName",
-        "spouseLastName",
-        "spouseDob",
-        "spouseEmail",
-        "spousePhone",
-      ],
-    }
-  )
-  .superRefine((data, ctx) => {
-    if (data.hasSpouse) {
-      if (!data.spouseFirstName) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Spouse's first name is required",
-          path: ["spouseFirstName"],
-        });
-      }
-      if (!data.spouseLastName) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Spouse's last name is required",
-          path: ["spouseLastName"],
-        });
-      }
-      if (!data.spouseDob) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Spouse's date of birth is required",
-          path: ["spouseDob"],
-        });
-      }
-      if (!data.spouseEmail) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Spouse's email is required",
-          path: ["spouseEmail"],
-        });
-      }
-      if (!data.spousePhone) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Spouse's phone number is required",
-          path: ["spousePhone"],
-        });
-      }
-    }
+    return true;
   });
 
 interface Props {
@@ -193,843 +79,413 @@ interface Props {
 }
 
 export default function MemberRegistrationPage({ open, close }: Props) {
-  const [step, setStep] = useState(1);
+  const {
+    signUp,
+    isLoaded: isSignUpLoaded,
+    setActive: setSignUpActive,
+  } = useSignUp();
 
-  const memberForm = useForm<z.infer<typeof memberSchema>>({
-    resolver: zodResolver(memberSchema),
+  const [showOtpVerification, setShowOtpVerification] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [signUpSuccess, setSignUpSuccess] = useState(false);
+
+  const signUpForm = useForm<z.infer<typeof signUpFormSchema>>({
+    resolver: zodResolver(signUpFormSchema),
     defaultValues: {
+      cpassword: "",
+      email: "",
       firstName: "",
       lastName: "",
-      email: "",
-      phone: "",
-      dob: null,
-      gender: "",
-      address: "",
-      city: "",
-      state: "",
-      zipCode: "",
+      password: "",
+      agreeToTerms: false,
+      gender: "male",
       occupation: "",
-      profilePhoto: null,
     },
   });
 
-  const spouseForm = useForm<z.infer<typeof spouseSchema>>({
-    resolver: zodResolver(spouseSchema),
-    defaultValues: {
-      hasSpouse: false,
-      spouseFirstName: null,
-      spouseLastName: null,
-      spouseDob: null,
-      spouseEmail: null,
-      spousePhone: null,
-      spouseOccupation: null,
+  const { mutateAsync: addMember, isLoading: addingMember } =
+    trpc.addMember.useMutation();
+  const { mutateAsync: handleSignUp, isLoading: signingUp } = useMutation({
+    mutationFn: async ({
+      firstName,
+      lastName,
+      email,
+      password,
+    }: z.infer<typeof signUpFormSchema>) => {
+      if (!isSignUpLoaded) throw Error("SIGNUP_NOT_LOADED");
+      return await signUp.create({
+        firstName,
+        lastName,
+        emailAddress: email,
+        password,
+      });
+    },
+    onSuccess: async (data) => {
+      if (isSignUpLoaded) {
+        const { createdSessionId } = data;
+        await setSignUpActive({ session: createdSessionId });
+        try {
+          await signUp.prepareEmailAddressVerification({
+            strategy: "email_code",
+          });
+          setShowOtpVerification(true);
+          toast.success("An email with OTP has been sent to your email");
+        } catch (err) {
+          toast.error("Failed to sent otp. Try again later");
+        }
+      }
+    },
+    onError: (error) => {
+      toast.error((error as any)["errors"][0].longMessage);
     },
   });
 
-  const childrenForm = useForm<z.infer<typeof childSchema>>({
-    resolver: zodResolver(childSchema),
-    defaultValues: {
-      hasChild: false,
-      children: [
-        {
-          name: "",
-          age: 0,
-          gender: "",
-        },
-      ],
-    },
-  });
-
-  async function nextStep() {
-    if (step === 1) {
-      const status = await memberForm.trigger();
-
-      if (!status) return;
-    } else if (step === 2) {
-      const status = await spouseForm.trigger();
-      if (!status) return;
-    } else if (step === 3) {
-      const status = await childrenForm.trigger();
-      if (!status) return;
+  async function handleVerifyOtp() {
+    if (!isSignUpLoaded) {
+      toast.info("Something went wrong. Please try again");
+      return;
     }
 
-    setStep(step + 1);
+    try {
+      const verificationRes = await signUp.attemptEmailAddressVerification({
+        code: otp,
+      });
+
+      if (verificationRes.status === "complete") {
+        const { firstName, lastName, email } = signUpForm.getValues();
+        if (verificationRes.createdUserId) {
+          await addMember({
+            payload: {
+              address: "",
+              anniversary: "",
+              city: "",
+              createdAt: new Date().toISOString(),
+              dateOfBirth: "",
+              email,
+              id: verificationRes.createdUserId,
+              name: `${firstName} ${lastName}`,
+              spouseDateOfBirth: "",
+              spouseEmail: "",
+              spouseName: "",
+              spouseTelephone: "",
+              state: "",
+              telephone: "",
+              zip: "",
+              membershipStartDate: "",
+              membershipEndDate: "",
+              amount: 0,
+              status: "pending",
+              paymentDate: "",
+              stripeCustomerId: "",
+              stripeSubscriptionId: "",
+              stripePlanId: "",
+              stripeProductId: "",
+            },
+          });
+          await signUp.reload();
+          setSignUpSuccess(true);
+
+          close();
+        }
+      }
+    } catch (err) {
+      console.log("email_verfication_error: ", err);
+      toast.error("Email verification failed");
+    }
   }
 
-  const prevStep = () => {
-    setStep(step - 1);
-  };
-
-  function removeChild(index: number): void {
-    const { children } = childrenForm.getValues();
-    const updatedChildren = children.filter((_, i) => i !== index);
-    childrenForm.setValue("children", updatedChildren);
-  }
-
-  function addChild(): void {
-    const { children } = childrenForm.getValues();
-    childrenForm.setValue("children", [
-      ...children,
-      { name: "", age: 0, gender: "" },
-    ]);
-  }
   return (
     <Dialog open={open} onOpenChange={close} modal={true}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>Membership Details</DialogHeader>
+      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogHeader className="font-semibold">
+          Member Registration
+        </DialogHeader>
         <div className="flex flex-col h-auto w-full">
           <main className="flex-1">
-            <div className="w-full">
-              <div className="mb-4">
-                <div className="flex justify-between items-center">
-                  <div className="flex flex-col items-center">
-                    <div
-                      className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                        step >= 1
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-muted text-muted-foreground"
-                      }`}
-                    >
-                      {step > 1 ? <Check className="h-5 w-5" /> : "1"}
-                    </div>
-                    <span className="text-sm mt-1">Personal</span>
-                  </div>
-
-                  <div className="flex-1 flex items-center mx-2">
-                    <div
-                      className={`h-1 w-full ${
-                        step >= 2 ? "bg-primary" : "bg-muted"
-                      }`}
-                    ></div>
-                  </div>
-
-                  <div className="flex flex-col items-center">
-                    <div
-                      className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                        step >= 2
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-muted text-muted-foreground"
-                      }`}
-                    >
-                      {step > 2 ? <Check className="h-5 w-5" /> : "2"}
-                    </div>
-                    <span className="text-sm mt-1">Spouse</span>
-                  </div>
-
-                  <div className="flex-1 flex items-center mx-2">
-                    <div
-                      className={`h-1 w-full ${
-                        step >= 3 ? "bg-primary" : "bg-muted"
-                      }`}
-                    ></div>
-                  </div>
-
-                  <div className="flex flex-col items-center">
-                    <div
-                      className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                        step >= 3
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-muted text-muted-foreground"
-                      }`}
-                    >
-                      {step > 3 ? <Check className="h-5 w-5" /> : "3"}
-                    </div>
-                    <span className="text-sm mt-1">Children</span>
-                  </div>
+            <Form {...signUpForm}>
+              <form
+                onSubmit={signUpForm.handleSubmit((values) => {
+                  handleSignUp({ ...values });
+                })}
+                className="space-y-4"
+              >
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    name="firstName"
+                    control={signUpForm.control}
+                    render={({ field }) => {
+                      return (
+                        <FormItem>
+                          <FormLabel>Firstname</FormLabel>
+                          <FormControl>
+                            <Input placeholder="eg. Jhon" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      );
+                    }}
+                  />
+                  <FormField
+                    name="lastName"
+                    control={signUpForm.control}
+                    render={({ field }) => {
+                      return (
+                        <FormItem>
+                          <FormLabel>Lastname</FormLabel>
+                          <FormControl>
+                            <Input placeholder="eg. Doe" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      );
+                    }}
+                  />
                 </div>
-              </div>
+                <FormField
+                  name="email"
+                  control={signUpForm.control}
+                  render={({ field }) => {
+                    return (
+                      <FormItem>
+                        <FormLabel>Email</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter email" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
+                />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    name="password"
+                    control={signUpForm.control}
+                    render={({ field }) => {
+                      return (
+                        <FormItem>
+                          <FormLabel>Password</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Enter passowrd" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      );
+                    }}
+                  />
+                  <FormField
+                    name="cpassword"
+                    control={signUpForm.control}
+                    render={({ field }) => {
+                      return (
+                        <FormItem>
+                          <FormLabel>Confirm Password</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Enter confirm passowrd"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      );
+                    }}
+                  />
+                </div>
 
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FormField
+                    name="gender"
+                    control={signUpForm.control}
+                    render={({ field }) => {
+                      return (
+                        <FormItem>
+                          <FormLabel>Gender</FormLabel>
+                          <FormControl>
+                            <Select
+                              value={field.value}
+                              onValueChange={field.onChange}
+                            >
+                              <SelectTrigger>
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectGroup>
+                                  <SelectItem value="male">Male</SelectItem>
+                                  <SelectItem value="female">Female</SelectItem>
+                                  <SelectItem value="non-binary">
+                                    Non binary
+                                  </SelectItem>
+                                  <SelectItem value="others">Others</SelectItem>
+                                  <SelectItem value="prefer-not-to-say">
+                                    Prefer not to say
+                                  </SelectItem>
+                                </SelectGroup>
+                              </SelectContent>
+                            </Select>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      );
+                    }}
+                  />
+                  <FormField
+                    name="occupation"
+                    control={signUpForm.control}
+                    render={({ field }) => {
+                      return (
+                        <FormItem>
+                          <FormLabel>Occupation</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="eg. Architect"
+                              {...field}
+                              value={field.value ?? ""}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      );
+                    }}
+                  />
+                </div>
+                <div className="flex items-center space-x-2">
+                  <FormField
+                    control={signUpForm.control}
+                    name="agreeToTerms"
+                    render={({ field }) => {
+                      return (
+                        <FormItem>
+                          <FormControl>
+                            <div className="flex items-center gap-3">
+                              <Checkbox
+                                id="terms"
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                              />
+                              <label
+                                htmlFor="terms"
+                                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                              >
+                                I agree to the{" "}
+                                <Link
+                                  href="#"
+                                  className="text-primary hover:underline"
+                                >
+                                  terms and conditions
+                                </Link>
+                              </label>
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      );
+                    }}
+                  />
+                </div>
+                <Button
+                  className="w-full mb-4"
+                  type="submit"
+                  disabled={!signUpForm.getValues().agreeToTerms}
+                  loading={signingUp}
+                >
+                  Create Account
+                </Button>
+              </form>
+            </Form>
+            {showOtpVerification && !signUpSuccess && (
               <Card>
                 <CardHeader>
-                  <CardTitle>
-                    {step === 1 && "Personal Details"}
-                    {step === 2 && "Spouse Details"}
-                    {step === 3 && "Children Details"}
-                  </CardTitle>
+                  <CardTitle>Verify OTP</CardTitle>
                   <CardDescription>
-                    {step === 1 && "Please provide your personal information"}
-                    {step === 2 &&
-                      "Please provide information about your spouse (if applicable)"}
-                    {step === 3 &&
-                      "Please provide information about your children (if applicable)"}
+                    Enter the otp sent to your email address
                   </CardDescription>
                 </CardHeader>
-
                 <CardContent>
-                  {step === 1 && (
-                    <Form {...memberForm}>
-                      <form onSubmit={memberForm.handleSubmit((values) => {})}>
-                        <div className="space-y-4">
-                          {/* <div className="flex justify-center mb-6">
-                        <div className="relative w-32 h-32 rounded-full overflow-hidden bg-muted flex items-center justify-center">
-                          {formData.profilePhoto ? (
-                            <Image
-                              src={formData.profilePhoto || "/placeholder.svg"}
-                              alt="Profile"
-                              fill
-                              className="object-cover"
-                            />
-                          ) : (
-                            <User className="h-16 w-16 text-muted-foreground" />
-                          )}
-                          <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 hover:opacity-100 transition-opacity">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="text-white"
-                            >
-                              <Upload className="h-5 w-5 mr-2" />
-                              Upload
-                            </Button>
-                          </div>
-                        </div>
-                      </div> */}
-
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <FormField
-                              control={memberForm.control}
-                              name="firstName"
-                              render={({ field }) => {
-                                return (
-                                  <FormItem>
-                                    <FormLabel>First Name</FormLabel>
-                                    <FormControl>
-                                      <Input
-                                        placeholder="eg. Jhon"
-                                        {...field}
-                                      />
-                                    </FormControl>
-                                    <FormMessage />
-                                  </FormItem>
-                                );
-                              }}
-                            />
-                            <FormField
-                              control={memberForm.control}
-                              name="lastName"
-                              render={({ field }) => {
-                                return (
-                                  <FormItem>
-                                    <FormLabel>Last Name</FormLabel>
-                                    <FormControl>
-                                      <Input placeholder="eg. Doe" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                  </FormItem>
-                                );
-                              }}
-                            />
-                          </div>
-
-                          <div className="space-y-2">
-                            <FormField
-                              control={memberForm.control}
-                              name="email"
-                              render={({ field }) => {
-                                return (
-                                  <FormItem>
-                                    <FormLabel>Email</FormLabel>
-                                    <FormControl>
-                                      <Input
-                                        type="email"
-                                        placeholder="eg. test@example.com"
-                                        {...field}
-                                      />
-                                    </FormControl>
-                                    <FormMessage />
-                                  </FormItem>
-                                );
-                              }}
-                            />
-                          </div>
-
-                          <div className="space-y-2">
-                            <FormField
-                              control={memberForm.control}
-                              name="phone"
-                              render={({ field }) => {
-                                return (
-                                  <FormItem>
-                                    <FormLabel>Phone Number</FormLabel>
-                                    <FormControl>
-                                      <Input
-                                        type="number"
-                                        placeholder="eg. 123456780"
-                                        {...field}
-                                      />
-                                    </FormControl>
-                                    <FormMessage />
-                                  </FormItem>
-                                );
-                              }}
-                            />
-                          </div>
-
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <FormField
-                              control={memberForm.control}
-                              name="dob"
-                              render={({ field }) => {
-                                return (
-                                  <FormItem>
-                                    <FormLabel>Date Of Birth</FormLabel>
-                                    <FormControl>
-                                      {/* <Popover>
-                                        <PopoverTrigger asChild>
-                                          <Button
-                                            variant="outline"
-                                            className="w-full justify-start text-left font-normal"
-                                          >
-                                            <CalendarIcon className="mr-2 h-4 w-4" />
-                                            {memberForm.getValues().dob ? (
-                                              format(
-                                                dayjs(
-                                                  memberForm.getValues().dob
-                                                ).toDate(),
-                                                "PPP"
-                                              )
-                                            ) : (
-                                              <span>Pick a date</span>
-                                            )}
-                                          </Button>
-                                        </PopoverTrigger>
-                                        <PopoverContent className="w-auto p-0">
-                                          <Calendar
-                                            mode="single"
-                                            selected={field.value ?? undefined}
-                                            onSelect={field.onChange}
-                                            initialFocus
-                                          />
-                                        </PopoverContent>
-                                      </Popover> */}
-                                      <CustomDatePicker
-                                        value={field.value ?? undefined}
-                                        onSelect={field.onChange}
-                                      />
-                                    </FormControl>
-                                    <FormMessage />
-                                  </FormItem>
-                                );
-                              }}
-                            />
-                            <div className="space-y-2">
-                              <FormField
-                                control={memberForm.control}
-                                name="gender"
-                                render={({ field }) => {
-                                  return (
-                                    <FormItem>
-                                      <FormLabel>Gender</FormLabel>
-                                      <FormControl>
-                                        <RadioGroup
-                                          value={field.value}
-                                          onValueChange={field.onChange}
-                                          className="flex space-x-4"
-                                        >
-                                          <div className="flex items-center space-x-2">
-                                            <RadioGroupItem
-                                              value="male"
-                                              id="male"
-                                            />
-                                            <Label htmlFor="male">Male</Label>
-                                          </div>
-                                          <div className="flex items-center space-x-2">
-                                            <RadioGroupItem
-                                              value="female"
-                                              id="female"
-                                            />
-                                            <Label htmlFor="female">
-                                              Female
-                                            </Label>
-                                          </div>
-                                          <div className="flex items-center space-x-2">
-                                            <RadioGroupItem
-                                              value="other"
-                                              id="other"
-                                            />
-                                            <Label htmlFor="other">Other</Label>
-                                          </div>
-                                        </RadioGroup>
-                                      </FormControl>
-                                      <FormMessage />
-                                    </FormItem>
-                                  );
-                                }}
-                              />
-                            </div>
-                          </div>
-
-                          <div className="space-y-2">
-                            <FormField
-                              control={memberForm.control}
-                              name="address"
-                              render={({ field }) => {
-                                return (
-                                  <FormItem>
-                                    <FormLabel>Address</FormLabel>
-                                    <FormControl>
-                                      <Textarea
-                                        {...field}
-                                        placeholder="Your address"
-                                        className="resize-none"
-                                      />
-                                    </FormControl>
-                                    <FormMessage />
-                                  </FormItem>
-                                );
-                              }}
-                            />
-                          </div>
-
-                          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                            <FormField
-                              control={memberForm.control}
-                              name="city"
-                              render={({ field }) => {
-                                return (
-                                  <FormItem>
-                                    <FormLabel>City</FormLabel>
-                                    <FormControl>
-                                      <Input {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                  </FormItem>
-                                );
-                              }}
-                            />
-                            <FormField
-                              control={memberForm.control}
-                              name="state"
-                              render={({ field }) => {
-                                return (
-                                  <FormItem>
-                                    <FormLabel>State/Province</FormLabel>
-                                    <FormControl>
-                                      <Input {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                  </FormItem>
-                                );
-                              }}
-                            />
-                            <FormField
-                              control={memberForm.control}
-                              name="zipCode"
-                              render={({ field }) => {
-                                return (
-                                  <FormItem>
-                                    <FormLabel>Zip/Postal Code</FormLabel>
-                                    <FormControl>
-                                      <Input
-                                        {...field}
-                                        placeholder="eg. 12345"
-                                      />
-                                    </FormControl>
-                                    <FormMessage />
-                                  </FormItem>
-                                );
-                              }}
-                            />
-                          </div>
-                          <FormField
-                            control={memberForm.control}
-                            name="occupation"
-                            render={({ field }) => {
-                              return (
-                                <FormItem>
-                                  <FormLabel>Occupation</FormLabel>
-                                  <FormControl>
-                                    <Input
-                                      {...field}
-                                      placeholder="eg. Architect"
-                                    />
-                                  </FormControl>
-                                </FormItem>
-                              );
-                            }}
-                          />
-                        </div>
-                      </form>
-                    </Form>
-                  )}
-                  {step === 2 && (
-                    <Form {...spouseForm}>
-                      <form action="">
-                        <div className="space-y-6">
-                          <FormField
-                            control={spouseForm.control}
-                            name="hasSpouse"
-                            render={({ field }) => {
-                              return (
-                                <FormItem>
-                                  <FormControl>
-                                    <div className="flex items-center space-x-2 mb-6">
-                                      <Checkbox
-                                        id="hasSpouse"
-                                        checked={field.value}
-                                        onCheckedChange={field.onChange}
-                                      />
-                                      <label
-                                        htmlFor="hasSpouse"
-                                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                      >
-                                        I have a spouse/partner
-                                      </label>
-                                    </div>
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              );
-                            }}
-                          />
-
-                          {spouseForm.getValues().hasSpouse && (
-                            <>
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <FormField
-                                  control={spouseForm.control}
-                                  name="spouseFirstName"
-                                  render={({ field }) => {
-                                    return (
-                                      <FormItem>
-                                        <FormLabel>First Name</FormLabel>
-                                        <FormControl>
-                                          <Input
-                                            {...field}
-                                            value={field.value ?? ""}
-                                            placeholder="eg. Marry"
-                                          />
-                                        </FormControl>
-                                        <FormMessage />
-                                      </FormItem>
-                                    );
-                                  }}
-                                />
-                                <FormField
-                                  control={spouseForm.control}
-                                  name="spouseLastName"
-                                  render={({ field }) => {
-                                    return (
-                                      <FormItem>
-                                        <FormLabel>Last Name</FormLabel>
-                                        <FormControl>
-                                          <Input
-                                            {...field}
-                                            value={field.value ?? ""}
-                                            placeholder="eg. Jane"
-                                          />
-                                        </FormControl>
-                                        <FormMessage />
-                                      </FormItem>
-                                    );
-                                  }}
-                                />
-                              </div>
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <FormField
-                                  control={spouseForm.control}
-                                  name="spouseDob"
-                                  render={({ field }) => {
-                                    return (
-                                      <FormItem>
-                                        <FormLabel>Date Of Birth</FormLabel>
-                                        <FormControl>
-                                          <Popover>
-                                            <PopoverTrigger asChild>
-                                              <Button
-                                                variant="outline"
-                                                className="w-full justify-start text-left font-normal"
-                                              >
-                                                <CalendarIcon className="mr-2 h-4 w-4" />
-                                                {spouseForm.getValues()
-                                                  .spouseDob ? (
-                                                  format(
-                                                    dayjs(
-                                                      spouseForm.getValues()
-                                                        .spouseDob
-                                                    ).toDate(),
-                                                    "PPP"
-                                                  )
-                                                ) : (
-                                                  <span>Pick a date</span>
-                                                )}
-                                              </Button>
-                                            </PopoverTrigger>
-                                            <PopoverContent className="w-auto p-0">
-                                              <Calendar
-                                                mode="single"
-                                                selected={
-                                                  field.value ?? undefined
-                                                }
-                                                onSelect={field.onChange}
-                                                initialFocus
-                                              />
-                                            </PopoverContent>
-                                          </Popover>
-                                        </FormControl>
-                                        <FormMessage />
-                                      </FormItem>
-                                    );
-                                  }}
-                                />
-                              </div>
-                              <FormField
-                                control={spouseForm.control}
-                                name="spouseEmail"
-                                render={({ field }) => {
-                                  return (
-                                    <FormItem>
-                                      <FormLabel>Email</FormLabel>
-                                      <FormControl>
-                                        <Input
-                                          {...field}
-                                          value={field.value ?? ""}
-                                          placeholder="eg. test@example.com"
-                                        />
-                                      </FormControl>
-                                      <FormMessage />
-                                    </FormItem>
-                                  );
-                                }}
-                              />
-                              <FormField
-                                control={spouseForm.control}
-                                name="spousePhone"
-                                render={({ field }) => {
-                                  return (
-                                    <FormItem>
-                                      <FormLabel>Phone Number</FormLabel>
-                                      <FormControl>
-                                        <Input
-                                          {...field}
-                                          value={field.value ?? ""}
-                                          placeholder="eg. 13456780"
-                                        />
-                                      </FormControl>
-                                      <FormMessage />
-                                    </FormItem>
-                                  );
-                                }}
-                              />
-                              <FormField
-                                control={spouseForm.control}
-                                name="spouseOccupation"
-                                render={({ field }) => {
-                                  return (
-                                    <FormItem>
-                                      <FormLabel>Occupation</FormLabel>
-                                      <FormControl>
-                                        <Input
-                                          {...field}
-                                          value={field.value ?? ""}
-                                        />
-                                      </FormControl>
-                                      <FormMessage />
-                                    </FormItem>
-                                  );
-                                }}
-                              />
-                            </>
-                          )}
-                        </div>
-                      </form>
-                    </Form>
-                  )}
-                  {step === 3 && (
-                    <Form {...childrenForm}>
-                      <form action="" className="space-y-6">
-                        <FormField
-                          control={childrenForm.control}
-                          name="hasChild"
-                          render={({ field }) => {
-                            return (
-                              <FormItem>
-                                <FormControl>
-                                  <div className="flex items-center space-x-2 mb-6">
-                                    <Checkbox
-                                      id="hasChildren"
-                                      checked={field.value}
-                                      onCheckedChange={field.onChange}
-                                    />
-                                    <label
-                                      htmlFor="hasChildren"
-                                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                    >
-                                      I have children
-                                    </label>
-                                  </div>
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            );
-                          }}
-                        />
-                        {childrenForm.getValues().hasChild &&
-                          childrenForm
-                            .getValues()
-                            .children.map((child, index) => {
-                              const { children } = childrenForm.getValues();
-                              return (
-                                <div
-                                  key={index}
-                                  className="border p-4 rounded-md relative"
-                                >
-                                  <div className="absolute top-4 right-4">
-                                    {children.length > 1 && (
-                                      <Button
-                                        type="button"
-                                        variant="ghost"
-                                        size="sm"
-                                        onClick={() => removeChild(index)}
-                                        className="h-8 w-8 p-0"
-                                      >
-                                        <Trash2 className="h-4 w-4" />
-                                      </Button>
-                                    )}
-                                  </div>
-
-                                  <h3 className="font-medium mb-4">
-                                    Child {index + 1}
-                                  </h3>
-
-                                  <div className="space-y-4">
-                                    <FormField
-                                      control={childrenForm.control}
-                                      name={`children.${index}.name`}
-                                      render={({ field }) => (
-                                        <FormItem>
-                                          <FormLabel>Child's Name</FormLabel>
-                                          <FormControl>
-                                            <Input
-                                              {...field}
-                                              placeholder="eg. John"
-                                            />
-                                          </FormControl>
-                                          <FormMessage />
-                                        </FormItem>
-                                      )}
-                                    />
-                                    <FormField
-                                      control={childrenForm.control}
-                                      name={`children.${index}.age`}
-                                      render={({ field }) => (
-                                        <FormItem>
-                                          <FormLabel>Child's Age</FormLabel>
-                                          <FormControl>
-                                            <Input
-                                              {...field}
-                                              type="number"
-                                              placeholder="eg. 5"
-                                            />
-                                          </FormControl>
-                                          <FormMessage />
-                                        </FormItem>
-                                      )}
-                                    />
-                                    <FormField
-                                      control={childrenForm.control}
-                                      name={`children.${index}.gender`}
-                                      render={({ field }) => (
-                                        <FormItem>
-                                          <FormLabel>Child's Gender</FormLabel>
-                                          <FormControl>
-                                            <RadioGroup
-                                              value={field.value}
-                                              onValueChange={field.onChange}
-                                              className="flex space-x-4"
-                                            >
-                                              <div className="flex items-center space-x-2">
-                                                <RadioGroupItem
-                                                  value="male"
-                                                  id={`male-${index}`}
-                                                />
-                                                <Label
-                                                  htmlFor={`male-${index}`}
-                                                >
-                                                  Male
-                                                </Label>
-                                              </div>
-                                              <div className="flex items-center space-x-2">
-                                                <RadioGroupItem
-                                                  value="female"
-                                                  id={`female-${index}`}
-                                                />
-                                                <Label
-                                                  htmlFor={`female-${index}`}
-                                                >
-                                                  Female
-                                                </Label>
-                                              </div>
-                                              <div className="flex items-center space-x-2">
-                                                <RadioGroupItem
-                                                  value="other"
-                                                  id={`other-${index}`}
-                                                />
-                                                <Label
-                                                  htmlFor={`other-${index}`}
-                                                >
-                                                  Other
-                                                </Label>
-                                              </div>
-                                            </RadioGroup>
-                                          </FormControl>
-                                          <FormMessage />
-                                        </FormItem>
-                                      )}
-                                    />
-                                  </div>
-                                </div>
-                              );
-                            })}
-                        <Button
-                          type="button"
-                          variant="outline"
-                          onClick={addChild}
-                          className="w-full"
-                        >
-                          <Plus className="h-4 w-4 mr-2" />
-                          Add Another Child
-                        </Button>
-                      </form>
-                    </Form>
-                  )}
-                </CardContent>
-
-                <CardFooter className="flex justify-between">
-                  {step > 1 && (
-                    <Button type="button" variant="outline" onClick={prevStep}>
-                      Previous
-                    </Button>
-                  )}
-
-                  {step < 3 ? (
-                    <Button
-                      type="button"
-                      onClick={nextStep}
-                      className={step > 1 ? "" : "ml-auto"}
+                  <div className="flex flex-col h-full w-full max-w-lg items-center justify-center gap-3">
+                    <Label htmlFor="otp" className="text-left">
+                      Enter OTP
+                    </Label>
+                    <InputOTP
+                      maxLength={6}
+                      id="otp"
+                      onChange={(value) => {
+                        setOtp(value);
+                      }}
                     >
-                      Next
+                      <InputOTPGroup>
+                        <InputOTPSlot index={0} />
+                        <InputOTPSlot index={1} />
+                        <InputOTPSlot index={2} />
+                        <InputOTPSlot index={3} />
+                        <InputOTPSlot index={4} />
+                        <InputOTPSlot index={5} />
+                      </InputOTPGroup>
+                    </InputOTP>
+                    <div id="clerk-captcha" />
+                  </div>
+                  <CardFooter>
+                    <Button
+                      className="w-full mt-8"
+                      disabled={otp.length !== 6}
+                      onClick={handleVerifyOtp}
+                      loading={addingMember}
+                    >
+                      Verify
                     </Button>
-                  ) : (
-                    <Button type="submit" className="bg-primary">
-                      Complete Registration
-                    </Button>
-                  )}
-                </CardFooter>
+                  </CardFooter>
+                </CardContent>
               </Card>
+            )}
+            {signUpSuccess && (
+              <Card>
+                <CardContent>
+                  <div className="flex flex-col h-full w-full space-y-5 items-center justify-center py-24">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      x="0px"
+                      y="0px"
+                      viewBox="13.25 13.25 37.5 37.5"
+                      enable-background="new 0 0 64 64"
+                      width={80}
+                      height={80}
+                    >
+                      <g>
+                        <g></g>
 
-              <div className="mt-8 text-center text-sm text-muted-foreground">
-                <p>
-                  Already a member?{" "}
-                  <Link
-                    href="/sign-in"
-                    className="text-primary hover:underline"
-                  >
-                    Sign in here
-                  </Link>
-                </p>
-              </div>
-            </div>
+                        <circle
+                          fill="#61EF36FF"
+                          stroke="#61EF36FF"
+                          stroke-width="2.5"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-miterlimit="10"
+                          cx="32"
+                          cy="32"
+                          r="17.5"
+                        />
+                      </g>
+                      <g>
+                        <polyline
+                          fill="none"
+                          stroke="#FFFFFFFF"
+                          stroke-width="2.5"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-miterlimit="10"
+                          points="   21.5,32 28.5,39 42.5,25  "
+                        />
+                      </g>
+                    </svg>
+                    <p className="text-2xl font-semibold text-secondary/50">
+                      Registration successful
+                    </p>
+                    <CardDescription>
+                      You will be automatically redirected to the homepage
+                    </CardDescription>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </main>
         </div>
       </DialogContent>

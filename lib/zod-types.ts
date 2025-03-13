@@ -67,7 +67,9 @@ const contactSchema = z.object({
   lastName: z.string(),
   email: z.string(),
   message: z.string(),
-  createdAt: z.string(),
+  phone: z.string(),
+  subject: z.string(),
+  userType: z.enum(["individual", "organization", "media", "other"])
 });
 
 const productSchema = z.object({
