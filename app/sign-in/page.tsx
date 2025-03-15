@@ -29,13 +29,13 @@ import {
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { trpc } from "@/lib/trpc/client";
-import { useSignIn, useSignUp } from "@clerk/nextjs";
+import { useSignIn, useSignUp, useUser } from "@clerk/nextjs";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -86,6 +86,8 @@ export default function SignInPage() {
   const [showOtpVerification, setShowOtpVerification] = useState(false);
   const [otp, setOtp] = useState("");
   const [signUpSuccess, setSignUpSuccess] = useState(false);
+
+  const { isSignedIn } = useUser();
 
   const { mutateAsync: addMember, isLoading: addingMember } =
     trpc.addMember.useMutation();
@@ -219,7 +221,7 @@ export default function SignInPage() {
           await signUp.reload();
           setSignUpSuccess(true);
 
-          const redirectInterval = setInterval(() => {
+          setInterval(() => {
             redirect("/");
           }, 3000);
         }
@@ -229,6 +231,12 @@ export default function SignInPage() {
       toast.error("Email verification failed");
     }
   }
+
+  useEffect(() => {
+    if (isSignedIn) {
+      redirect("/");
+    }
+  }, [isSignedIn]);
 
   return (
     <div className="flex min-h-screen flex-col">

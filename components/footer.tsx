@@ -96,14 +96,6 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/subscription"
-                  className="text-muted-foreground hover:text-primary"
-                >
-                  Subscribe
-                </Link>
-              </li>
-              <li>
-                <Link
                   href="/contact-us"
                   className="text-muted-foreground hover:text-primary"
                 >

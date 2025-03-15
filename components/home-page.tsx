@@ -1,50 +1,25 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   ArrowRight,
-  ChevronRight,
   Clock,
   CloudDownload,
   HourglassIcon,
   TreePalmIcon,
-  TreesIcon,
+  TreesIcon
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import Footer from "./footer";
 import Header from "./header";
+import UpcomingEventsMarquee from "./upcoming-events-marquee";
 
 export default function HomePage() {
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
-      <div className="flex items-center gap-2 mb-2 sm:mb-0 w-full justify-center mx-auto bg-primary/30 px-2">
-        <div className="flex items-center w-full justify-center">
-          <div className="flex items-center gap-4">
-            <div className="bg-primary text-primary-foreground text-xs font-bold px-2 py-1 rounded">
-              NEW EVENT
-            </div>
-            <p className="text-sm font-medium">
-              Join us for our Community 5K Run/ Walk on March 17, 2025
-            </p>
-          </div>
-          <div className="py-3 px-4 flex flex-col sm:flex-row items-center">
-            <div className="flex items-center gap-3">
-              <Link href="/events?t=uc">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="text-xs h-8 gap-1"
-                >
-                  Learn More <ChevronRight className="h-3 w-3" />
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
+      <UpcomingEventsMarquee />
       <main className="flex-1">
         {/* Hero Section */}
         <section className="relative">
@@ -105,10 +80,10 @@ export default function HomePage() {
               </div>
               <div className="relative h-[400px] rounded-lg overflow-hidden">
                 <Image
-                  src="/placeholder.svg?height=400&width=600"
+                  src="/images/sankalpa_logo.png?height=400&width=600"
                   alt="Community project"
                   fill
-                  className="object-cover"
+                  className="object-contain"
                 />
               </div>
             </div>
@@ -218,9 +193,12 @@ export default function HomePage() {
                 </div>
                 <CardContent className="p-6">
                   <h3 className="text-xl font-bold mb-2">Preservation work</h3>
-                  <p className="text-muted-foreground mb-4">
-                    Creating sustainable livelihoods through skills training,
-                    microfinance, and entrepreneurship support.
+                  <p className="text-muted-foreground mb-4 line-clamp-3">
+                    As an environmentally conscious non-profit, we take pride in
+                    preserving our community through tree plantations and the
+                    removal of invasive plants. Our efforts help restore natural
+                    habitats, promote biodiversity, and ensure a greener future.
+                    Together, we can make a lasting impact—one tree at a time!
                   </p>
                 </CardContent>
               </Card>
@@ -248,32 +226,37 @@ export default function HomePage() {
               </p>
             </div>
 
-            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-              <Card className="overflow-hidden">
-                <div className="relative h-48">
+            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-2">
+              <Card className="overflow-hidden max-w-lg">
+                <div className="relative h-56">
                   <div className="absolute top-0 left-0 bg-primary text-primary-foreground px-4 py-2 z-10 rounded-br-lg font-medium">
-                    JUN 15
+                    MAR 29
                   </div>
                   <Image
-                    src="/placeholder.svg?height=200&width=400"
+                    src="/images/annual_meeting_banner.png?height=200&width=400"
                     alt="Charity Gala"
                     fill
-                    className="object-cover"
+                    className="object-cover bg-muted-foreground/100"
                   />
                 </div>
                 <CardContent className="p-6">
                   <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
                     <Clock className="h-4 w-4" />
-                    <span>7:00 PM - 10:00 PM</span>
+                    <span>TDB</span>
                   </div>
                   <h3 className="text-xl font-bold mb-2">
-                    Annual Charity Gala
+                    Annual General Meeting
                   </h3>
-                  <p className="text-muted-foreground mb-4">
-                    Join us for an evening of inspiration, entertainment, and
-                    fundraising to support our global initiatives.
+                  <p className="text-muted-foreground mb-4 line-clamp-4">
+                    Our Annual General Meeting (AGM) is a key event where
+                    members come together to reflect on our achievements,
+                    discuss future initiatives, and strengthen our mission.
+                    It&apos;s an opportunity to review financials, elect
+                    leadership, and engage in meaningful conversations about our
+                    community impact. Join us as we celebrate progress and shape
+                    the path ahead!
                   </p>
-                  <Link href="/events">
+                  <Link href="/events?t=uc">
                     <Button variant="outline" className="w-full">
                       Register Now
                     </Button>
@@ -281,45 +264,13 @@ export default function HomePage() {
                 </CardContent>
               </Card>
 
-              <Card className="overflow-hidden">
-                <div className="relative h-48">
+              <Card className="overflow-hidden max-w-lg">
+                <div className="relative h-56">
                   <div className="absolute top-0 left-0 bg-primary text-primary-foreground px-4 py-2 z-10 rounded-br-lg font-medium">
-                    JUL 8
+                    MAY 17
                   </div>
                   <Image
-                    src="/placeholder.svg?height=200&width=400"
-                    alt="Volunteer Day"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
-                    <Clock className="h-4 w-4" />
-                    <span>9:00 AM - 2:00 PM</span>
-                  </div>
-                  <h3 className="text-xl font-bold mb-2">
-                    Community Volunteer Day
-                  </h3>
-                  <p className="text-muted-foreground mb-4">
-                    Help us make a difference in our local community through
-                    hands-on service projects and activities.
-                  </p>
-                  <Link href="/events">
-                    <Button variant="outline" className="w-full">
-                      Register Now
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
-
-              <Card className="overflow-hidden">
-                <div className="relative h-48">
-                  <div className="absolute top-0 left-0 bg-primary text-primary-foreground px-4 py-2 z-10 rounded-br-lg font-medium">
-                    AUG 22
-                  </div>
-                  <Image
-                    src="/placeholder.svg?height=200&width=400"
+                    src="/images/run_event_banner.jpg?height=200&width=400"
                     alt="Fundraising Run"
                     fill
                     className="object-cover"
@@ -330,12 +281,18 @@ export default function HomePage() {
                     <Clock className="h-4 w-4" />
                     <span>8:00 AM - 12:00 PM</span>
                   </div>
-                  <h3 className="text-xl font-bold mb-2">Hope 5K Run/Walk</h3>
-                  <p className="text-muted-foreground mb-4">
-                    Run or walk to raise funds for our clean water initiative.
-                    All ages and abilities welcome.
+                  <h3 className="text-xl font-bold mb-2">
+                    5K Run / 2K Walk in collaboration with Township
+                  </h3>
+                  <p className="text-muted-foreground mb-4 line-clamp-4">
+                    Sankalpa, in collaboration with Plainsboro Township, is
+                    excited to host the **3rd Annual 5K Run/2K Walk on May 17,
+                    2025, at Plainsboro Community Park! With record-breaking
+                    participation over the last two years, this event continues
+                    to grow, bringing together runners, walkers, families, and
+                    community members for a meaningful cause.
                   </p>
-                  <Link href="/events">
+                  <Link href="/events?t=uc">
                     <Button variant="outline" className="w-full">
                       Register Now
                     </Button>
@@ -355,7 +312,7 @@ export default function HomePage() {
         </section>
 
         {/* Testimonials */}
-        <section className="py-16 md:py-24 bg-muted/50">
+        {/* <section className="py-16 md:py-24 bg-muted/50">
           <div className="container">
             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl text-center mb-16">
               Stories of Sankalpa
@@ -442,7 +399,7 @@ export default function HomePage() {
               </TabsContent>
             </Tabs>
           </div>
-        </section>
+        </section> */}
 
         {/* Newsletter */}
         <section className="py-16 md:py-24">

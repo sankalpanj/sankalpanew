@@ -3,7 +3,7 @@ import Header from "@/components/header";
 import { ReadMoreButton } from "@/components/read-more";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { EVENTS } from "@/lib/constants";
@@ -269,7 +269,7 @@ export default async function EventsPage({
                           for the mission—because together, we can create a
                           greener, more sustainable future!
                         </p>
-                        <ReadMoreButton eventName="Picnic"/>
+                        <ReadMoreButton eventName="Picnic" />
                       </CardContent>
                     </Card>
 
@@ -361,7 +361,7 @@ export default async function EventsPage({
                     <Card className="overflow-hidden">
                       <div className="relative h-56">
                         <div className="absolute top-0 left-0 bg-primary text-primary-foreground px-4 py-2 z-10 rounded-br-lg font-medium">
-                          MAR 17, 2025
+                          MAY 17, 2025
                         </div>
                         <Image
                           src="/images/5kRun/logo.png?height=100&width=200"
@@ -412,6 +412,59 @@ export default async function EventsPage({
                           <Button className="w-full">Register Now</Button>
                         </Link>
                       </CardContent>
+                    </Card>
+                    <Card className="overflow-hidden">
+                      <div className="relative h-56">
+                        <div className="absolute top-0 left-0 bg-primary text-primary-foreground px-4 py-2 z-10 rounded-br-lg font-medium">
+                          MAR 29, 2025
+                        </div>
+                        <Image
+                          src="/images/annual_meeting_banner.png?height=100&width=200"
+                          alt="5KRun"
+                          fill
+                          className="object-contain"
+                        />
+                      </div>
+                      <CardContent className="p-6">
+                        <div className="flex justify-between items-start mb-2">
+                          <Badge>Community</Badge>
+                          <div className="flex items-center text-sm text-muted-foreground">
+                            <Users className="h-4 w-4 mr-1" />
+                            <span>120 attending</span>
+                          </div>
+                        </div>
+                        <h3 className="text-xl font-bold mb-2">
+                          Annual General Meeting
+                        </h3>
+                        <div className="space-y-2 mb-4">
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <Clock className="h-4 w-4 flex-shrink-0" />
+                            <span>7:00 PM - 10:00 PM</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <MapPin className="h-4 w-4 flex-shrink-0" />
+                            <span>Plainsboro Community Park, New Jersey</span>
+                          </div>
+                        </div>
+                        <p className="text-muted-foreground line-clamp-5 break-words">
+                          Our Annual General Meeting (AGM) is a key event where
+                          members come together to reflect on our achievements,
+                          discuss future initiatives, and strengthen our
+                          mission. It&apos;s an opportunity to review
+                          financials, elect leadership, and engage in meaningful
+                          conversations about our community impact. Join us as
+                          we celebrate progress and shape the path ahead!
+                        </p>
+                      </CardContent>
+                      <CardFooter className="w-full">
+                        <Link
+                          href={EVENTS["fiveKRun"].link ?? ""}
+                          target="_blank"
+                          className="w-full"
+                        >
+                          <Button className="w-full">Register Now</Button>
+                        </Link>
+                      </CardFooter>
                     </Card>
                   </div>
                 </div>
