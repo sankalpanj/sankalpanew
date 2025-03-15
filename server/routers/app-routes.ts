@@ -1,13 +1,16 @@
+import { EmailTemplate } from "@/components/email-template";
 import { db } from "@/lib/db";
 import { contacts, members } from "@/lib/db/schema";
 import { contactSchema, memberSchema } from "@/lib/zod-types";
 import dayjs from "dayjs";
 import { eq } from "drizzle-orm";
+import { Resend } from "resend";
 import Stripe from "stripe";
 import { z } from "zod";
 import { procedure, router } from "../trpc";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+const resend = new Resend(process.env.RESEND_PUBLIC_KEY);
 
 export const appRouter = router({
   addMember: procedure
@@ -204,6 +207,41 @@ export const appRouter = router({
         return {
           code: "FAILED",
           data: null,
+        } as const;
+      }
+    }),
+  sendContactMail: procedure
+    .input(
+      z.object({
+        firstName: z.string(),
+        lastName: z.string(),
+        email: z.string(),
+        phone: z.string().nullable(),
+        subject: z.string().nullable(),
+        message: z.string(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const { email, firstName, lastName, message, phone, subject } = input;
+      try {
+        const { data, error } = await resend.emails.send({
+          from: email,
+          to: "info@sankalpausa.org",
+          subject: subject ?? `${firstName} is trying to contact`,
+          react: EmailTemplate({ firstName, lastName, email, phone, message }),
+        });
+
+        if (error) {
+          return { code: "FAILED", data: null, reason: error.message } as const;
+        }
+
+        return { code: "SUCCESS", data: data?.id, reason: null } as const;
+      } catch (err) {
+        console.log("send mail failed: ", err);
+        return {
+          code: "FAILED",
+          data: null,
+          reason: "Failed to send contact email",
         } as const;
       }
     }),

@@ -60,6 +60,9 @@ export default function ContactUsPage() {
     },
   });
 
+  const { mutateAsync: sendContactMail, isLoading: sendingMail } =
+    trpc.sendContactMail.useMutation();
+
   const { mutateAsync: addContactRecord, isLoading: addingRecord } =
     trpc.addContact.useMutation({
       onError: () => {
@@ -86,6 +89,33 @@ export default function ContactUsPage() {
       },
     });
 
+  async function handleContact(values: z.infer<typeof formSchema>) {
+    const { firstName, lastName, email, message, phone, subject } = values;
+    const { code, reason, data } = await sendContactMail({
+      firstName,
+      lastName,
+      email,
+      message,
+      phone: phone ?? null,
+      subject: subject ?? null,
+    });
+
+    if (code === "FAILED") {
+      toast.error("Failed to send", {
+        description: reason,
+      });
+      return;
+    }
+
+    await addContactRecord({
+      payload: {
+        ...values,
+        phone: values.phone ?? "",
+        subject: values.subject ?? "",
+      },
+    });
+  }
+
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
@@ -108,8 +138,8 @@ export default function ContactUsPage() {
               Contact Us
             </h1>
             <p className="mt-6 max-w-2xl text-lg">
-              We&apos;d love to hear from you. Reach out with questions, feedback, or
-              to learn more about our work.
+              We&apos;d love to hear from you. Reach out with questions,
+              feedback, or to learn more about our work.
             </p>
           </div>
         </section>
@@ -123,8 +153,8 @@ export default function ContactUsPage() {
                   Get in Touch
                 </h2>
                 <p className="text-lg text-muted-foreground mb-8">
-                  Have questions or want to learn more about our work? We&apos;d love
-                  to hear from you. Our team is here to help.
+                  Have questions or want to learn more about our work? We&apos;d
+                  love to hear from you. Our team is here to help.
                 </p>
 
                 <div className="space-y-6">
@@ -223,16 +253,7 @@ export default function ContactUsPage() {
                   <Form {...form}>
                     <form
                       className="space-y-4"
-                      onSubmit={form.handleSubmit(
-                        async (values) =>
-                          await addContactRecord({
-                            payload: {
-                              ...values,
-                              phone: values.phone ?? "",
-                              subject: values.subject ?? "",
-                            },
-                          })
-                      )}
+                      onSubmit={form.handleSubmit(handleContact)}
                     >
                       <div className="grid grid-cols-2 gap-4">
                         <FormField

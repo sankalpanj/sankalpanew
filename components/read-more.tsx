@@ -22,8 +22,6 @@ interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 function getImagesFromDirectory(directoryName: string) {
   const publicDir = path.join(process.cwd(), "public", "images", directoryName);
-  console.log(process.cwd());
-  console.log(publicDir);
   const imageExtensions = [".jpg", ".jpeg", ".png", ".gif", ".svg", ".webp"];
 
   const files = fs.readdirSync(publicDir);
@@ -33,15 +31,15 @@ function getImagesFromDirectory(directoryName: string) {
     return imageExtensions.includes(ext);
   });
 
-  console.log(images);
-
   return images.map((image) => `images/${directoryName}/${image}`);
 }
 
 export function ReadMoreButton({ eventName, ...props }: Props) {
   const { description, link, linkText, title } = EVENTS[eventName];
 
-  const images = getImagesFromDirectory("5kRun");
+  const images = getImagesFromDirectory(
+    eventName === "fiveKRun" ? "5kRun" : eventName
+  );
 
   return (
     <Dialog>
@@ -54,11 +52,24 @@ export function ReadMoreButton({ eventName, ...props }: Props) {
         <div className="grid md:grid-cols-5 h-full">
           {/* Image Section - Takes up 2/5 of the space on medium screens and above */}
           <div className="hidden md:block md:col-span-2 bg-muted h-full">
-            <img
-              src="/images/5kRun/logo.png?height=600&width=400"
-              alt="Product showcase"
-              className="w-full h-full object-contain px-5"
-            />
+            {eventName === "fiveKRun" && (
+              <img
+                src="/images/5kRun/logo.png?height=600&width=400"
+                alt="Product showcase"
+                className="w-full h-full object-contain px-5"
+              />
+            )}
+            <div
+              className="w-full h-full relative bg-muted-foreground/10"
+              style={{
+                backgroundImage:
+                  "linear-gradient(180deg, #D9AFD9 0%, #97D9E1 100%)",
+              }}
+            >
+              <p className="text-5xl font-bold absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 tracking-normal text-white/100 leading-normal">
+                {title}
+              </p>
+            </div>
           </div>
 
           {/* Content Section - Takes up 3/5 of the space on medium screens and above */}
@@ -92,7 +103,9 @@ export function ReadMoreButton({ eventName, ...props }: Props) {
                     />
                   </div>
                   {description.map((item, index) => (
-                    <p key={index} className="text-muted-foreground">{item}</p>
+                    <p key={index} className="text-muted-foreground">
+                      {item}
+                    </p>
                   ))}
                 </TabsContent>
 

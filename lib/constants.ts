@@ -163,6 +163,57 @@ community engagement, and environmental stewardship.`,
     link: `https://runsignup.com/Race/NJ/Plainsboro/Sankalpa5Krun`,
     linkText: "Register Now",
   },
+  foodDrive: {
+    description: [
+      `
+      As the holiday season approaches, we are reminded of the power of community and the impact
+of giving. Last year like other years, our Annual Holiday Food Drive was a testament to the
+generosity and kindness of our neighbors.
+      `,
+      `
+      Thanks to your incredible support, we were able to collect and donate enough food to help
+families in need. Your contributions—whether big or small—made a meaningful difference,
+ensuring that no one in our community goes hungry during this special time of the year.
+      `,
+      `
+      A heartfelt thank you to everyone who donated, spread the word, and volunteered to make this
+drive a success. Your compassion and generosity continue to inspire us, and we are grateful to be
+part of such a caring community.
+      `,
+    ],
+    title: "Annual Holiday Food Drive",
+    link: null,
+    linkText: "",
+  },
+  toyDrive: {
+    description: [
+      `Like every year, Sankalpa proudly hosted its annual Toy Drive, spreading joy and hope to
+children in need. During this special holiday season, we invite our wonderful community to
+come together and make a difference. By donating new, unwrapped toys, you can bring
+happiness to a child who deserves to feel special and cherished.`,
+      `With the support of generous neighbors and kind-hearted individuals, we continue to brighten the
+season for countless children—because every child deserves the magic of play!`,
+    ],
+    link: null,
+    linkText: "",
+    title: "Toy Drive",
+  },
+  Picnic: {
+    description: [
+      `What better way to enjoy the sunshine than a Summer Picnic with Purpose? Sankalpa
+organizes a day of fun, friendship, and environmental action!`,
+      `Meet fellow environmental enthusiasts and strengthen our community. Learn how you can
+contribute to sustainability efforts and become a part of our organization. Bring your friends,
+share delicious food, and participate in eco-friendly activities that support our cause.Experience
+the beauty we strive to protect while engaging in meaningful discussions about our initiatives.`,
+      `Whether you're already involved or just curious, this is a great opportunity to relax, connect,
+and make an impact. Come for the picnic, stay for the mission—because together, we can
+create a greener, more sustainable future!`,
+    ],
+    link: null,
+    linkText: "",
+    title: "Annual Picnic",
+  },
 };
 
 const CARD_ELEMENT_OPTIONS = {
@@ -193,6 +244,6 @@ const CARD_ELEMENT_OPTIONS = {
 
 type EventSchema = z.infer<typeof Event>;
 
-export { EVENTS, MEMBERS, CARD_ELEMENT_OPTIONS };
+export { CARD_ELEMENT_OPTIONS, EVENTS, MEMBERS };
 
 export type { EventSchema };

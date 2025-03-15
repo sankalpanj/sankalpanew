@@ -89,7 +89,7 @@ export default async function EventsPage({
                     <Card className="overflow-hidden">
                       <div className="relative h-56">
                         <div className="absolute top-0 left-0 bg-primary text-primary-foreground px-4 py-2 z-10 rounded-br-lg font-medium">
-                          JAN 2022
+                          DEC 2023
                         </div>
                         <Image
                           src="/images/foodDrive/FoodDrive2022_01.jpg?height=200&width=400"
@@ -123,14 +123,14 @@ export default async function EventsPage({
                           Our community food drive is a powerful initiative that
                           brings neighbors together to support those in need.
                         </p>
-                        {/* <Button className="w-full">Register Now</Button> */}
+                        <ReadMoreButton eventName="foodDrive" />
                       </CardContent>
                     </Card>
 
                     <Card className="overflow-hidden">
                       <div className="relative h-56">
                         <div className="absolute top-0 left-0 bg-primary text-primary-foreground px-4 py-2 z-10 rounded-br-lg font-medium">
-                          JUL 2024
+                          DEC 2024
                         </div>
                         <Image
                           src="/images/toyDrive/ToyDrive2024.jpg?height=200&width=400"
@@ -170,14 +170,14 @@ export default async function EventsPage({
                           brighten the season for countless children—because
                           every child deserves the magic of play!
                         </p>
-                        {/* <Button className="w-full">Register Now</Button> */}
+                        <ReadMoreButton eventName="toyDrive" />
                       </CardContent>
                     </Card>
 
                     <Card className="overflow-hidden">
                       <div className="relative h-56">
                         <div className="absolute top-0 left-0 bg-primary text-primary-foreground px-4 py-2 z-10 rounded-br-lg font-medium">
-                          FEB 2024
+                          MAY 2025
                         </div>
                         <Image
                           src="/images/5kRun/5KRun_2.jpeg?height=200&width=400"
@@ -205,19 +205,26 @@ export default async function EventsPage({
                             <span>Plainsboro, NJ</span>
                           </div>
                         </div>
-                        <p className="text-muted-foreground mb-4">
-                          We have conducted several food drives for the
-                          Plainsboro Pantry with generous donations from our
-                          patrons.
+                        <p className="text-muted-foreground mb-4 line-clamp-3">
+                          Sankalpa, in collaboration with Plainsboro Township,
+                          is excited to host the **3rd Annual 5K Run/2K Walk on
+                          May 17, 2025, at Plainsboro Community Park! With
+                          record-breaking participation over the last two years,
+                          this event continues to grow, bringing together
+                          runners, walkers, families, and community members for
+                          a meaningful cause.
                         </p>
-                        {/* <Button className="w-full">Register Now</Button> */}
+                        <ReadMoreButton
+                          eventName="fiveKRun"
+                          className="flex w-full justify-end mb-2"
+                        />
                       </CardContent>
                     </Card>
 
                     <Card className="overflow-hidden">
                       <div className="relative h-56">
                         <div className="absolute top-0 left-0 bg-primary text-primary-foreground px-4 py-2 z-10 rounded-br-lg font-medium">
-                          SEP 2025
+                          JUL 2024
                         </div>
                         <Image
                           src="/images/Picnic/Picnic2025_21.JPG?height=200&width=400"
@@ -234,7 +241,7 @@ export default async function EventsPage({
                             <span>75 attended</span>
                           </div>
                         </div>
-                        <h3 className="text-xl font-bold mb-2">Picnic 2025</h3>
+                        <h3 className="text-xl font-bold mb-2">Picnic 2024</h3>
                         <div className="space-y-2 mb-4">
                           <div className="flex items-center gap-2 text-sm text-muted-foreground">
                             <Clock className="h-4 w-4 flex-shrink-0" />
@@ -262,7 +269,7 @@ export default async function EventsPage({
                           for the mission—because together, we can create a
                           greener, more sustainable future!
                         </p>
-                        {/* <Button className="w-full">Register Now</Button> */}
+                        <ReadMoreButton eventName="Picnic"/>
                       </CardContent>
                     </Card>
 
