@@ -187,7 +187,7 @@ export default function Footer() {
         <div className="border-t mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-center items-center gap-4">
             <p className="text-sm text-muted-foreground">
-              © {new Date().getFullYear()} HopeFoundation. All rights reserved.
+              © {new Date().getFullYear()} Sankalpa. All rights reserved.
             </p>
           </div>
         </div>
