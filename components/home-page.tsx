@@ -182,9 +182,12 @@ export default function HomePage() {
                 <CardContent className="p-6">
                   <h3 className="text-xl font-bold mb-2">Community 5K Run</h3>
                   <p className="text-muted-foreground mb-4">
-                    Join us for a morning of fitness, friendship, and
-                    environmental action. Whether you run, walk, or cheer from
-                    the sidelines, every step counts toward a greener future!
+                  Sankalpa, in collaboration with Plainsboro Township, is 
+                  excited to host the **3rd Annual 5K Run/2K Walk on May 17, 2025, 
+                  at Plainsboro Community Park! With record-breaking 
+                  participation over the last two years, this event continues 
+                  to grow, bringing together runners, walkers, families, and 
+                  community members for a meaningful cause.  
                   </p>
                 </CardContent>
               </Card>
@@ -201,8 +204,17 @@ export default function HomePage() {
                 <CardContent className="p-6">
                   <h3 className="text-xl font-bold mb-2">Food Drive</h3>
                   <p className="text-muted-foreground mb-4">
-                    Improving access to essential healthcare services and
-                    promoting community health and wellbeing.
+                  As the holiday season approaches, we are reminded of 
+                  the power of community and the impact of giving. 
+                  Last year like other years, our Annual Holiday Food 
+                  Drive was a testament to the generosity and kindness 
+                  of our neighbors.
+                  Thanks to your incredible support, we were able to 
+                  collect and donate enough food to help families in 
+                  need. Your contributions—whether big or small—made 
+                  a meaningful difference, ensuring that no one in our 
+                  community goes hungry during this special time of the 
+                  year.
                   </p>
                 </CardContent>
               </Card>
@@ -217,10 +229,13 @@ export default function HomePage() {
                   />
                 </div>
                 <CardContent className="p-6">
-                  <h3 className="text-xl font-bold mb-2">Preservation work</h3>
+                  <h3 className="text-xl font-bold mb-2">Nature work at Preserve</h3>
                   <p className="text-muted-foreground mb-4">
-                    Creating sustainable livelihoods through skills training,
-                    microfinance, and entrepreneurship support.
+                  As an environmentally conscious non-profit, we take pride in 
+                  preserving our community through tree plantations and the removal 
+                  of invasive plants. Our efforts help restore natural habitats, 
+                  promote biodiversity, and ensure a greener future. Together, 
+                  we can make a lasting impact—one tree at a time! 
                   </p>
                 </CardContent>
               </Card>
@@ -252,10 +267,10 @@ export default function HomePage() {
               <Card className="overflow-hidden">
                 <div className="relative h-48">
                   <div className="absolute top-0 left-0 bg-primary text-primary-foreground px-4 py-2 z-10 rounded-br-lg font-medium">
-                    JUN 15
+                    MAR 29
                   </div>
                   <Image
-                    src="/placeholder.svg?height=200&width=400"
+                    src="/images/events/meeting.jpg?height=200&width=400"
                     alt="Charity Gala"
                     fill
                     className="object-cover"
@@ -264,14 +279,14 @@ export default function HomePage() {
                 <CardContent className="p-6">
                   <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
                     <Clock className="h-4 w-4" />
-                    <span>7:00 PM - 10:00 PM</span>
+                    <span>11:00 AM - 03:00 PM</span>
                   </div>
                   <h3 className="text-xl font-bold mb-2">
-                    Annual Charity Gala
+                    Annual General Meeting
                   </h3>
                   <p className="text-muted-foreground mb-4">
-                    Join us for an evening of inspiration, entertainment, and
-                    fundraising to support our global initiatives.
+                  Join us for our Annual General Meeting as we reflect on our journey, 
+                  celebrate our impact, and chart a greener future together!
                   </p>
                   <Link href="/events">
                     <Button variant="outline" className="w-full">
@@ -284,11 +299,11 @@ export default function HomePage() {
               <Card className="overflow-hidden">
                 <div className="relative h-48">
                   <div className="absolute top-0 left-0 bg-primary text-primary-foreground px-4 py-2 z-10 rounded-br-lg font-medium">
-                    JUL 8
+                    MAY 17
                   </div>
                   <Image
-                    src="/placeholder.svg?height=200&width=400"
-                    alt="Volunteer Day"
+                    src="/images/events/2024Run.jpg?height=200&width=400"
+                    alt="Fundraising Run"
                     fill
                     className="object-cover"
                   />
@@ -296,14 +311,15 @@ export default function HomePage() {
                 <CardContent className="p-6">
                   <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
                     <Clock className="h-4 w-4" />
-                    <span>9:00 AM - 2:00 PM</span>
+                    <span>8:00 AM - 11:00 AM</span>
                   </div>
                   <h3 className="text-xl font-bold mb-2">
-                    Community Volunteer Day
+                    Community 5K Run / 2K Walk 
                   </h3>
                   <p className="text-muted-foreground mb-4">
-                    Help us make a difference in our local community through
-                    hands-on service projects and activities.
+                  Sankalpa, in collaboration with Plainsboro Township, is excited to host the **3rd Annual 5K Run/2K Walk on May 17, 2025, 
+                  at Plainsboro Community Park! With record-breaking participation over the last two years, this event continues to grow, 
+                  bringing together runners, walkers, families, and community members for a meaningful cause.  
                   </p>
                   <Link href="/events">
                     <Button variant="outline" className="w-full">
@@ -316,7 +332,7 @@ export default function HomePage() {
               <Card className="overflow-hidden">
                 <div className="relative h-48">
                   <div className="absolute top-0 left-0 bg-primary text-primary-foreground px-4 py-2 z-10 rounded-br-lg font-medium">
-                    AUG 22
+                    TBD
                   </div>
                   <Image
                     src="/placeholder.svg?height=200&width=400"
@@ -330,14 +346,13 @@ export default function HomePage() {
                     <Clock className="h-4 w-4" />
                     <span>8:00 AM - 12:00 PM</span>
                   </div>
-                  <h3 className="text-xl font-bold mb-2">Hope 5K Run/Walk</h3>
+                  <h3 className="text-xl font-bold mb-2">Community Volunteer Day</h3>
                   <p className="text-muted-foreground mb-4">
-                    Run or walk to raise funds for our clean water initiative.
-                    All ages and abilities welcome.
+                  Get your hands dirty for a greener future! 🌱🌏 Help us combat invasive species and plant native plants to restore balance and beauty to our environment.
                   </p>
                   <Link href="/events">
                     <Button variant="outline" className="w-full">
-                      Register Now
+                      {/* Register Now */}
                     </Button>
                   </Link>
                 </CardContent>

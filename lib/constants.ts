@@ -88,6 +88,11 @@ const MEMBERS: Member[] = [
     imageSrc: "/images/members/ng_vp_t.jpeg",
   },
   {
+    name: "Rama Duvvuri",
+    designation: "Member",
+    imageSrc: "/images/members/rama_duvvuri_member.jpeg",
+  },
+  {
     name: "Reetesh Ghosh",
     designation: "Member",
     imageSrc: "/images/members/reeteshghosh_member.jpeg",
@@ -107,6 +112,11 @@ const MEMBERS: Member[] = [
     designation: "Advisor",
     imageSrc: "/images/members/Advisor_SantanuRaha.jpeg",
   },
+  {
+    name: "Srikar Challa",
+    designation: "Member",
+    imageSrc: "/images/members/srikar_challa_member.jpeg",
+  },  
   {
     name: "Somak Bhattacharya",
     designation: "Member",
