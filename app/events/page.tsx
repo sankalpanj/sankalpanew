@@ -419,10 +419,10 @@ export default async function EventsPage({
                           MAR 29, 2025
                         </div>
                         <Image
-                          src="/images/annual_meeting_banner.png?height=100&width=200"
+                          src="/images/events/meeting.jpg?height=100&width=500"
                           alt="5KRun"
                           fill
-                          className="object-contain"
+                          className="object-cover"
                         />
                       </div>
                       <CardContent className="p-6">
