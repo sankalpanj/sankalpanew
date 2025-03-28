@@ -439,7 +439,7 @@ export default async function EventsPage({
                         <div className="space-y-2 mb-4">
                           <div className="flex items-center gap-2 text-sm text-muted-foreground">
                             <Clock className="h-4 w-4 flex-shrink-0" />
-                            <span>7:00 PM - 10:00 PM</span>
+                            <span>11:00 AM - 03:00 PM</span>
                           </div>
                           <div className="flex items-center gap-2 text-sm text-muted-foreground">
                             <MapPin className="h-4 w-4 flex-shrink-0" />
