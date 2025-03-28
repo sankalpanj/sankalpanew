@@ -88,6 +88,11 @@ const MEMBERS: Member[] = [
     imageSrc: "/images/members/ng_vp_t.jpeg",
   },
   {
+    name: "Rama Duvvuri",
+    designation: "Member",
+    imageSrc: "/images/members/rama_duvvuri_member.jpeg",
+  },
+  {
     name: "Reetesh Ghosh",
     designation: "Member",
     imageSrc: "/images/members/reeteshghosh_member.jpeg",
@@ -106,6 +111,11 @@ const MEMBERS: Member[] = [
     name: "Shantanu Raha",
     designation: "Advisor",
     imageSrc: "/images/members/Advisor_SantanuRaha.jpeg",
+  },
+  {
+    name: "Srikar Challa",
+    designation: "Member",
+    imageSrc: "/images/members/srikar_challa_member.jpeg",
   },
   {
     name: "Somak Bhattacharya",
@@ -133,6 +143,7 @@ const MEMBERS: Member[] = [
     imageSrc: "/images/members/vkn_chief_env_of.jpeg",
   },
 ];
+
 const Event = z.record(
   z.object({
     description: z.array(z.string()),
@@ -246,4 +257,5 @@ type EventSchema = z.infer<typeof Event>;
 
 export { CARD_ELEMENT_OPTIONS, EVENTS, MEMBERS };
 
-export type { EventSchema };
+  export type { EventSchema };
+

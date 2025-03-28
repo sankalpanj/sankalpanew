@@ -7,7 +7,7 @@ import {
   CloudDownload,
   HourglassIcon,
   TreePalmIcon,
-  TreesIcon
+  TreesIcon,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -148,18 +148,21 @@ export default function HomePage() {
               <Card>
                 <div className="relative h-60">
                   <Image
-                    src="/images/5kRun/5KRun_1.jpg?height=300&width=400"
-                    alt="Education program"
+                    src="/images/events/2024Run.jpg?height=300&width=400"
+                    alt="5kRun"
                     fill
                     className="object-cover rounded-t-lg"
                   />
                 </div>
                 <CardContent className="p-6">
                   <h3 className="text-xl font-bold mb-2">Community 5K Run</h3>
-                  <p className="text-muted-foreground mb-4">
-                    Join us for a morning of fitness, friendship, and
-                    environmental action. Whether you run, walk, or cheer from
-                    the sidelines, every step counts toward a greener future!
+                  <p className="text-muted-foreground mb-4 line-clamp-4">
+                    Sankalpa, in collaboration with Plainsboro Township, is
+                    excited to host the **3rd Annual 5K Run/2K Walk on May 17,
+                    2025, at Plainsboro Community Park! With record-breaking
+                    participation over the last two years, this event continues
+                    to grow, bringing together runners, walkers, families, and
+                    community members for a meaningful cause.
                   </p>
                 </CardContent>
               </Card>
@@ -175,9 +178,16 @@ export default function HomePage() {
                 </div>
                 <CardContent className="p-6">
                   <h3 className="text-xl font-bold mb-2">Food Drive</h3>
-                  <p className="text-muted-foreground mb-4">
-                    Improving access to essential healthcare services and
-                    promoting community health and wellbeing.
+                  <p className="text-muted-foreground mb-4 line-clamp-4">
+                    As the holiday season approaches, we are reminded of the
+                    power of community and the impact of giving. Last year like
+                    other years, our Annual Holiday Food Drive was a testament
+                    to the generosity and kindness of our neighbors. Thanks to
+                    your incredible support, we were able to collect and donate
+                    enough food to help families in need. Your
+                    contributions—whether big or small—made a meaningful
+                    difference, ensuring that no one in our community goes
+                    hungry during this special time of the year.
                   </p>
                 </CardContent>
               </Card>
@@ -192,8 +202,10 @@ export default function HomePage() {
                   />
                 </div>
                 <CardContent className="p-6">
-                  <h3 className="text-xl font-bold mb-2">Preservation work</h3>
-                  <p className="text-muted-foreground mb-4 line-clamp-3">
+                  <h3 className="text-xl font-bold mb-2">
+                    Nature work at Preserve
+                  </h3>
+                  <p className="text-muted-foreground mb-4 line-clamp-4">
                     As an environmentally conscious non-profit, we take pride in
                     preserving our community through tree plantations and the
                     removal of invasive plants. Our efforts help restore natural
@@ -226,15 +238,15 @@ export default function HomePage() {
               </p>
             </div>
 
-            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-2">
+            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
               <Card className="overflow-hidden max-w-lg">
                 <div className="relative h-56">
                   <div className="absolute top-0 left-0 bg-primary text-primary-foreground px-4 py-2 z-10 rounded-br-lg font-medium">
                     MAR 29
                   </div>
                   <Image
-                    src="/images/annual_meeting_banner.png?height=200&width=400"
-                    alt="Charity Gala"
+                    src="/images/events/meeting.jpg?height=200&width=400"
+                    alt="Annaul meeting"
                     fill
                     className="object-cover bg-muted-foreground/100"
                   />
@@ -242,22 +254,18 @@ export default function HomePage() {
                 <CardContent className="p-6">
                   <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
                     <Clock className="h-4 w-4" />
-                    <span>TDB</span>
+                    <span>11:00 AM - 03:00 PM</span>
                   </div>
                   <h3 className="text-xl font-bold mb-2">
                     Annual General Meeting
                   </h3>
                   <p className="text-muted-foreground mb-4 line-clamp-4">
-                    Our Annual General Meeting (AGM) is a key event where
-                    members come together to reflect on our achievements,
-                    discuss future initiatives, and strengthen our mission.
-                    It&apos;s an opportunity to review financials, elect
-                    leadership, and engage in meaningful conversations about our
-                    community impact. Join us as we celebrate progress and shape
-                    the path ahead!
+                    Join us for our Annual General Meeting as we reflect on our
+                    journey, celebrate our impact, and chart a greener future
+                    together!
                   </p>
                   <Link href="/events?t=uc">
-                    <Button variant="outline" className="w-full">
+                    <Button variant="outline" className="w-full mt-auto">
                       Register Now
                     </Button>
                   </Link>
@@ -270,7 +278,42 @@ export default function HomePage() {
                     MAY 17
                   </div>
                   <Image
-                    src="/images/run_event_banner.jpg?height=200&width=400"
+                    src="/images/events/2024Run.jpg?height=200&width=400"
+                    alt="Fundraising Run"
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+                    <Clock className="h-4 w-4" />
+                    <span>8:00 AM - 11:00 AM</span>
+                  </div>
+                  <h3 className="text-xl font-bold mb-2">
+                    Community 5K Run / 2K Walk
+                  </h3>
+                  <p className="text-muted-foreground mb-4 line-clamp-4">
+                    Sankalpa, in collaboration with Plainsboro Township, is
+                    excited to host the **3rd Annual 5K Run/2K Walk on May 17,
+                    2025, at Plainsboro Community Park! With record-breaking
+                    participation over the last two years, this event continues
+                    to grow, bringing together runners, walkers, families, and
+                    community members for a meaningful cause.
+                  </p>
+                  <Link href="/events?t=uc">
+                    <Button variant="outline" className="w-full">
+                      Register Now
+                    </Button>
+                  </Link>
+                </CardContent>
+              </Card>
+              <Card className="overflow-hidden max-w-lg">
+                <div className="relative h-56">
+                  <div className="absolute top-0 left-0 bg-primary text-primary-foreground px-4 py-2 z-10 rounded-br-lg font-medium">
+                    TBD
+                  </div>
+                  <Image
+                    src="/placeholder.svg?height=200&width=400"
                     alt="Fundraising Run"
                     fill
                     className="object-cover"
@@ -282,15 +325,12 @@ export default function HomePage() {
                     <span>8:00 AM - 12:00 PM</span>
                   </div>
                   <h3 className="text-xl font-bold mb-2">
-                    5K Run / 2K Walk in collaboration with Township
+                    Community Volunteer Day
                   </h3>
                   <p className="text-muted-foreground mb-4 line-clamp-4">
-                    Sankalpa, in collaboration with Plainsboro Township, is
-                    excited to host the **3rd Annual 5K Run/2K Walk on May 17,
-                    2025, at Plainsboro Community Park! With record-breaking
-                    participation over the last two years, this event continues
-                    to grow, bringing together runners, walkers, families, and
-                    community members for a meaningful cause.
+                    Get your hands dirty for a greener future! 🌱🌏 Help us
+                    combat invasive species and plant native plants to restore
+                    balance and beauty to our environment.
                   </p>
                   <Link href="/events?t=uc">
                     <Button variant="outline" className="w-full">
