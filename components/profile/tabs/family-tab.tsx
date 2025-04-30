@@ -189,7 +189,7 @@ export default function FamilyTab() {
                       mode="single"
                       selected={newMember.birthdate}
                       onSelect={(date) => {
-                        date && setNewMember({ ...newMember, birthdate: date });
+                        return date && setNewMember({ ...newMember, birthdate: date });
                       }}
                       initialFocus
                     />

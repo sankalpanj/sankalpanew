@@ -14,6 +14,7 @@ import Link from "next/link";
 import Footer from "./footer";
 import Header from "./header";
 import UpcomingEventsMarquee from "./upcoming-events-marquee";
+import VideoGalleryPage from "./video-section";
 
 export default function HomePage() {
   return (
@@ -89,6 +90,9 @@ export default function HomePage() {
             </div>
           </div>
         </section>
+
+        {/* Video section */}
+        <VideoGalleryPage />
 
         {/* Impact Stats */}
         <section className="py-16 md:py-24">
