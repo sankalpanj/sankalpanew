@@ -28,6 +28,7 @@ function AppOrchestrator() {
         }
       }
     },
+    refetchOnWindowFocus: false,
   });
 
   return null;

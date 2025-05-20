@@ -27,7 +27,7 @@ export default function HomePage() {
           <div className="absolute inset-0 bg-black/50 z-10" />
           <div className="relative h-[600px]">
             <Image
-              src="/images/banner_b.jpg?height=600&width=1200"
+              src="/images/banner_b.jpeg?height=600&width=1200"
               alt="Children smiling"
               fill
               className="object-cover"

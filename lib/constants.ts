@@ -18,11 +18,6 @@ const MEMBERS: Member[] = [
     imageSrc: "/images/members/anmk_bnj_presd.jpeg",
   },
   {
-    name: "Anjanita Das",
-    designation: "Member",
-    imageSrc: "/images/members/Member_AnjanitaDas.jpeg",
-  },
-  {
     name: "Ayona Biswas",
     designation: "Member",
     imageSrc: "/images/members/ay_bsw.jpeg",
